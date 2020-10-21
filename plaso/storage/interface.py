@@ -434,13 +434,15 @@ class BaseStore(object):
       yield session
 
   @abc.abstractmethod
-  def GetSortedEvents(self, time_range=None):
+  def GetSortedEvents(self, parser=None, time_range=None):
     """Retrieves the events in increasing chronological order.
 
     This includes all events written to the store including those pending
     being flushed (written) to the store.
 
     Args:
+      parser (Optional[str]): parser name used to filter events extracted by
+          a specific parser.
       time_range (Optional[TimeRange]): time range used to filter events
           that fall in a specific period.
 
@@ -895,13 +897,15 @@ class StorageReader(object):
     """
 
   @abc.abstractmethod
-  def GetSortedEvents(self, time_range=None):
+  def GetSortedEvents(self, parser=None, time_range=None):
     """Retrieves the events in increasing chronological order.
 
     This includes all events written to the storage including those pending
     being flushed (written) to the storage.
 
     Args:
+      parser (Optional[str]): parser name used to filter events extracted by
+          a specific parser.
       time_range (Optional[TimeRange]): time range used to filter events
           that fall in a specific period.
 
@@ -1142,13 +1146,15 @@ class StorageWriter(object):
     """
 
   @abc.abstractmethod
-  def GetSortedEvents(self, time_range=None):
+  def GetSortedEvents(self, parser=None, time_range=None):
     """Retrieves the events in increasing chronological order.
 
     This includes all events written to the storage including those pending
     being flushed (written) to the storage.
 
     Args:
+      parser (Optional[str]): parser name used to filter events extracted by
+          a specific parser.
       time_range (Optional[TimeRange]): time range used to filter events
           that fall in a specific period.
 

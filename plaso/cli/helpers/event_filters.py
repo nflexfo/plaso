@@ -34,6 +34,14 @@ class EventFiltersArgumentsHelper(interface.ArgumentsHelper):
           argparse group.
     """
     argument_group.add_argument(
+        '--parser', metavar='PARSER', dest='parser', type=str, default=None,
+        action='store', help=(
+            'Filters event extracted by a specific parser. This is faster '
+            'than using filter expression. Parser name can be an exact match '
+            '(e.g. "appcompatcache") or be prefixed with plugin name (e.g. '
+            '"winreg/appcompatcache").'))
+
+    argument_group.add_argument(
         '--slice', metavar='DATE_TIME', dest='slice', type=str, default='',
         action='store', help=(
             'Date and time to create a time slice around. This parameter, if '
@@ -98,6 +106,7 @@ class EventFiltersArgumentsHelper(interface.ArgumentsHelper):
             'Unable to compile filter expression with error: '
             '{0!s}').format(exception))
 
+    parser = getattr(options, 'parser', None)
     time_slice_event_time_string = getattr(options, 'slice', None)
     time_slice_duration = getattr(options, 'slice_size', 5)
     use_time_slicer = getattr(options, 'slicer', False)
@@ -131,6 +140,9 @@ class EventFiltersArgumentsHelper(interface.ArgumentsHelper):
 
     if filter_object:
       setattr(configuration_object, '_event_filter', filter_object)
+
+    if parser:
+      setattr(configuration_object, '_parser', parser)
 
     setattr(configuration_object, '_use_time_slicer', use_time_slicer)
 

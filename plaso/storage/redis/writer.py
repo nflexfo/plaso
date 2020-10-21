@@ -241,13 +241,15 @@ class RedisStorageWriter(interface.StorageWriter):
 
     return None
 
-  def GetSortedEvents(self, time_range=None):
+  def GetSortedEvents(self, parser=None, time_range=None):
     """Retrieves the events in increasing chronological order.
 
     This includes all events written to the storage including those pending
     being flushed (written) to the storage.
 
     Args:
+      parser (Optional[str]): parser name used to filter events extracted by
+          a specific parser.
       time_range (Optional[TimeRange]): time range used to filter events
           that fall in a specific period.
 
@@ -261,7 +263,7 @@ class RedisStorageWriter(interface.StorageWriter):
     if not self._store:
       raise IOError('Unable to read from closed storage writer.')
 
-    return self._store.GetSortedEvents(time_range=time_range)
+    return self._store.GetSortedEvents(parser=parser, time_range=time_range)
 
   def ReadSystemConfiguration(self, knowledge_base):
     """Reads system configuration information.

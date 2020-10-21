@@ -317,10 +317,12 @@ class RedisStore(interface.BaseStore):
     self._redis_client.hset(
         finalized_key, self._task_identifier, self._FINALIZED_BYTES)
 
-  def GetSortedEvents(self, time_range=None):
+  def GetSortedEvents(self, parser=None, time_range=None):
     """Retrieves the events in increasing chronological order.
 
     Args:
+      parser (Optional[str]): parser name used to filter events extracted by
+          a specific parser.
       time_range (Optional[TimeRange]): This argument is not supported by the
           Redis store.
 
@@ -331,7 +333,7 @@ class RedisStore(interface.BaseStore):
       RuntimeError: if a time_range argument is specified.
     """
     event_index_name = self._GenerateRedisKey(self._EVENT_INDEX_NAME)
-    if time_range:
+    if time_range or parser:
       raise RuntimeError('Not supported')
 
     sorted_event_identifiers = self._redis_client.zscan_iter(event_index_name)

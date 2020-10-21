@@ -135,20 +135,22 @@ class RedisStorageReader(interface.StorageReader):
     """
     return self._store.GetNumberOfEventSources()
 
-  def GetSortedEvents(self, time_range=None):
+  def GetSortedEvents(self, parser=None, time_range=None):
     """Retrieves the events in increasing chronological order.
 
     This includes all events written to the storage including those pending
     being flushed (written) to the storage.
 
     Args:
+      parser (Optional[str]): parser name used to filter events extracted by
+          a specific parser.
       time_range (Optional[TimeRange]): time range used to filter events
           that fall in a specific period.
 
     Returns:
       generator(EventObject): event generator.
     """
-    return self._store.GetSortedEvents(time_range)
+    return self._store.GetSortedEvents(parser=parser, time_range=time_range)
 
   def GetSessions(self):
     """Retrieves the sessions.

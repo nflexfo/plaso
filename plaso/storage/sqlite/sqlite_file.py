@@ -993,10 +993,12 @@ class SQLiteStorageFile(file_interface.BaseStorageFile):
         self._CONTAINER_TYPE_EVENT_SOURCE)
     return number_of_event_sources
 
-  def GetSortedEvents(self, time_range=None):
+  def GetSortedEvents(self, parser=None, time_range=None):
     """Retrieves the events in increasing chronological order.
 
     Args:
+      parser (Optional[str]): parser name used to filter events extracted by
+          a specific parser.
       time_range (Optional[TimeRange]): time range used to filter events
           that fall in a specific period.
 
@@ -1016,6 +1018,19 @@ class SQLiteStorageFile(file_interface.BaseStorageFile):
             '_timestamp <= {0:d}'.format(time_range.end_timestamp))
 
       filter_expression = ' AND '.join(filter_expression)
+
+    if parser:
+      # Parser are stored with plugin prefix (e.g. 'winreg/appcompatcache) but
+      # using just the parser name (e.g. 'appcompatcache') should be allowed.
+      # Also, some parsers does not have a plugin prefix (e.g. 'filestat').
+      parser_expression = \
+          '(_parser = "{0:s}" OR _parser LIKE "%/{1:s}")'.format(parser, parser)
+
+      if filter_expression:
+        filter_expression = \
+            '{0:s} AND {1:s}'.format(filter_expression, parser_expression)
+      else:
+        filter_expression = parser_expression
 
     event_generator = self._GetAttributeContainers(
         self._CONTAINER_TYPE_EVENT, filter_expression=filter_expression,

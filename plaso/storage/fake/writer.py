@@ -387,10 +387,12 @@ class FakeStorageWriter(interface.StorageWriter):
     self._written_event_source_index += 1
     return event_source
 
-  def GetSortedEvents(self, time_range=None):
+  def GetSortedEvents(self, parser=None, time_range=None):
     """Retrieves the events in increasing chronological order.
 
     Args:
+      parser (Optional[str]): parser name used to filter events extracted by
+          a specific parser.
       time_range (Optional[TimeRange]): time range used to filter events
           that fall in a specific period.
 
@@ -410,6 +412,8 @@ class FakeStorageWriter(interface.StorageWriter):
       if (time_range and (
           event.timestamp < time_range.start_timestamp or
           event.timestamp > time_range.end_timestamp)):
+        continue
+      elif not parser in event.parser:
         continue
 
       # The event index is used to ensure to sort events with the same date and

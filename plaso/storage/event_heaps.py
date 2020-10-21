@@ -86,25 +86,27 @@ class SerializedEventHeap(object):
       tuple: containing:
 
         int: event timestamp or None if the heap is empty
+        str: event parser or None if the heap is empty
         bytes: serialized event or None if the heap is empty
     """
     try:
-      timestamp, serialized_event = heapq.heappop(self._heap)
+      timestamp, parser, serialized_event = heapq.heappop(self._heap)
 
       self.data_size -= len(serialized_event)
-      return timestamp, serialized_event
+      return timestamp, parser, serialized_event
 
     except IndexError:
-      return None, None
+      return None, None, None
 
-  def PushEvent(self, timestamp, event_data):
+  def PushEvent(self, timestamp, parser, event_data):
     """Pushes a serialized event onto the heap.
 
     Args:
       timestamp (int): event timestamp, which contains the number of
           micro seconds since January 1, 1970, 00:00:00 UTC.
+      parser (str): parser used to extract event.
       event_data (bytes): serialized event.
     """
-    heap_values = (timestamp, event_data)
+    heap_values = (timestamp, parser, event_data)
     heapq.heappush(self._heap, heap_values)
     self.data_size += len(event_data)

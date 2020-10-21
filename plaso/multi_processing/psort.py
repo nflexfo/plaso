@@ -489,7 +489,7 @@ class PsortMultiProcessEngine(multi_process_engine.MultiProcessEngine):
 
   def _ExportEvents(
       self, storage_reader, output_module, deduplicate_events=True,
-      event_filter=None, time_slice=None, use_time_slicer=False):
+      event_filter=None, parser=None, time_slice=None, use_time_slicer=False):
     """Exports events using an output module.
 
     Args:
@@ -498,6 +498,8 @@ class PsortMultiProcessEngine(multi_process_engine.MultiProcessEngine):
       deduplicate_events (Optional[bool]): True if events should be
           deduplicated.
       event_filter (Optional[EventObjectFilter]): event filter.
+      parser (Optional[str]): parser name used to filter events extracted by
+          a specific parser.
       time_slice (Optional[TimeRange]): time range that defines a time slice
           to filter events.
       use_time_slicer (Optional[bool]): True if the 'time slicer' should be
@@ -523,7 +525,8 @@ class PsortMultiProcessEngine(multi_process_engine.MultiProcessEngine):
     self._events_status.number_of_filtered_events = 0
     self._events_status.number_of_events_from_time_slice = 0
 
-    for event in storage_reader.GetSortedEvents(time_range=time_slice_range):
+    for event in storage_reader.GetSortedEvents(parser=parser,
+        time_range=time_slice_range):
       event_data_identifier = event.GetEventDataIdentifier()
       event_data = storage_reader.GetEventDataByIdentifier(
           event_data_identifier)
@@ -1015,7 +1018,8 @@ class PsortMultiProcessEngine(multi_process_engine.MultiProcessEngine):
   def ExportEvents(
       self, knowledge_base_object, storage_reader, output_module,
       processing_configuration, deduplicate_events=True, event_filter=None,
-      status_update_callback=None, time_slice=None, use_time_slicer=False):
+      parser=None, status_update_callback=None, time_slice=None,
+      use_time_slicer=False):
     """Exports events using an output module.
 
     Args:
@@ -1028,6 +1032,8 @@ class PsortMultiProcessEngine(multi_process_engine.MultiProcessEngine):
       deduplicate_events (Optional[bool]): True if events should be
           deduplicated.
       event_filter (Optional[EventObjectFilter]): event filter.
+      parser (Optional[str]): parser name used to filter events extracted by
+          a specific parser.
       status_update_callback (Optional[function]): callback function for status
           updates.
       time_slice (Optional[TimeSlice]): slice of time to output.
@@ -1055,7 +1061,7 @@ class PsortMultiProcessEngine(multi_process_engine.MultiProcessEngine):
     try:
       self._ExportEvents(
           storage_reader, output_module, deduplicate_events=deduplicate_events,
-          event_filter=event_filter, time_slice=time_slice,
+          event_filter=event_filter, parser=parser, time_slice=time_slice,
           use_time_slicer=use_time_slicer)
 
     finally:

@@ -24,15 +24,15 @@ class SQLiteStorageFile(file_interface.BaseStorageFile):
     storage_type (str): storage type.
   """
 
-  _FORMAT_VERSION = 20200523
+  _FORMAT_VERSION = 20201010
 
   # The earliest format version, stored in-file, that this class
   # is able to append (write).
-  _APPEND_COMPATIBLE_FORMAT_VERSION = 20190309
+  _APPEND_COMPATIBLE_FORMAT_VERSION = 20201010
 
   # The earliest format version, stored in-file, that this class
   # is able to read.
-  _READ_COMPATIBLE_FORMAT_VERSION = 20170707
+  _READ_COMPATIBLE_FORMAT_VERSION = 20201010
 
   # Container types that are referenced from other container types.
   _REFERENCED_CONTAINER_TYPES = (
@@ -53,6 +53,7 @@ class SQLiteStorageFile(file_interface.BaseStorageFile):
       'CREATE TABLE {0:s} ('
       '_identifier INTEGER PRIMARY KEY AUTOINCREMENT,'
       '_timestamp BIGINT,'
+      '_parser TEXT,'
       '_data {1:s});')
 
   _HAS_TABLE_QUERY = (
@@ -153,7 +154,8 @@ class SQLiteStorageFile(file_interface.BaseStorageFile):
     if not serialized_data:
       serialized_data = self._SerializeAttributeContainer(event)
 
-    self._serialized_event_heap.PushEvent(event.timestamp, serialized_data)
+    self._serialized_event_heap.PushEvent(event.timestamp, event.parser,
+        serialized_data)
 
     if self._serialized_event_heap.data_size > self._maximum_buffer_size:
       self._WriteSerializedAttributeContainerList(self._CONTAINER_TYPE_EVENT)
@@ -595,7 +597,8 @@ class SQLiteStorageFile(file_interface.BaseStorageFile):
           container.
     """
     if attribute_container.CONTAINER_TYPE == self._CONTAINER_TYPE_EVENT:
-      timestamp, serialized_data = self._serialized_event_heap.PopEvent()
+      timestamp, parser, serialized_data = \
+          self._serialized_event_heap.PopEvent()
     else:
       if not serialized_data:
         serialized_data = self._SerializeAttributeContainer(
@@ -608,8 +611,8 @@ class SQLiteStorageFile(file_interface.BaseStorageFile):
       compressed_data = ''
 
     if attribute_container.CONTAINER_TYPE == self._CONTAINER_TYPE_EVENT:
-      query = 'INSERT INTO event (_timestamp, _data) VALUES (?, ?)'
-      values = (timestamp, serialized_data)
+      query = 'INSERT INTO event (_timestamp, _parser, _data) VALUES (?, ?, ?)'
+      values = (timestamp, parser, serialized_data)
     else:
       query = 'INSERT INTO {0:s} (_data) VALUES (?)'.format(
           attribute_container.CONTAINER_TYPE)
@@ -657,7 +660,7 @@ class SQLiteStorageFile(file_interface.BaseStorageFile):
       self._serializers_profiler.StartTiming('write')
 
     if container_type == self._CONTAINER_TYPE_EVENT:
-      query = 'INSERT INTO event (_timestamp, _data) VALUES (?, ?)'
+      query = 'INSERT INTO event (_timestamp, _parser, _data) VALUES (?, ?, ?)'
     else:
       query = 'INSERT INTO {0:s} (_data) VALUES (?)'.format(container_type)
 
@@ -668,7 +671,8 @@ class SQLiteStorageFile(file_interface.BaseStorageFile):
     values_tuple_list = []
     for _ in range(number_of_attribute_containers):
       if container_type == self._CONTAINER_TYPE_EVENT:
-        timestamp, serialized_data = self._serialized_event_heap.PopEvent()
+        timestamp, parser, serialized_data = \
+            self._serialized_event_heap.PopEvent()
       else:
         serialized_data = container_list.PopAttributeContainer()
 
@@ -683,7 +687,7 @@ class SQLiteStorageFile(file_interface.BaseStorageFile):
         total_serialized_data_size += len(serialized_data)
 
       if container_type == self._CONTAINER_TYPE_EVENT:
-        values_tuple_list.append((timestamp, serialized_data))
+        values_tuple_list.append((timestamp, parser, serialized_data))
       else:
         values_tuple_list.append((serialized_data, ))
 

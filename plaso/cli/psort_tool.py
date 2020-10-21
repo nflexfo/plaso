@@ -81,6 +81,7 @@ class PsortTool(
     self._knowledge_base = knowledge_base.KnowledgeBase()
     self._number_of_analysis_reports = 0
     self._output_time_zone = None
+    self._parser = None
     self._preferred_language = 'en-US'
     self._process_memory_limit = None
     self._status_view_mode = status_view.StatusView.MODE_WINDOW
@@ -593,7 +594,7 @@ class PsortTool(
       analysis_engine.ExportEvents(
           self._knowledge_base, storage_reader, self._output_module,
           configuration, deduplicate_events=self._deduplicate_events,
-          event_filter=self._event_filter,
+          event_filter=self._event_filter, parser=self._parser,
           status_update_callback=status_update_callback,
           time_slice=self._time_slice, use_time_slicer=self._use_time_slicer)
 

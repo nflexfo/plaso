@@ -73,6 +73,11 @@ class ExtractionMultiProcessEngineTest(shared_test_lib.BaseTestCase):
             storage_writer.GetNumberOfAttributeContainers(
                 'recovery_warning'))
 
+        data_types_counter = collections.Counter({
+            data_type_count.name: data_type_count.number_of_events
+            for data_type_count in storage_writer.GetAttributeContainers(
+                'data_type_count')})
+
         parsers_counter = collections.Counter({
             parser_count.name: parser_count.number_of_events
             for parser_count in storage_writer.GetAttributeContainers(
@@ -86,6 +91,11 @@ class ExtractionMultiProcessEngineTest(shared_test_lib.BaseTestCase):
     self.assertEqual(number_of_events, 15)
     self.assertEqual(number_of_extraction_warnings, 0)
     self.assertEqual(number_of_recovery_warnings, 0)
+
+    expected_data_types_counter = collections.Counter({
+        'fs:stat': 15,
+        'total': 15})
+    self.assertEqual(data_types_counter, expected_data_types_counter)
 
     expected_parsers_counter = collections.Counter({
         'filestat': 15,

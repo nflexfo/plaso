@@ -9,6 +9,21 @@ from plaso.containers import counts
 from tests import test_lib as shared_test_lib
 
 
+class DataTypeCountTest(shared_test_lib.BaseTestCase):
+  """Tests for the data_type count attribute container."""
+
+  def testGetAttributeNames(self):
+    """Tests the GetAttributeNames function."""
+    attribute_container = counts.DataTypeCount()
+
+    expected_attribute_names = [
+        'name',
+        'number_of_events']
+
+    attribute_names = sorted(attribute_container.GetAttributeNames())
+    self.assertEqual(attribute_names, expected_attribute_names)
+
+
 class EventLabelCountTest(shared_test_lib.BaseTestCase):
   """Tests for the event label count attribute container."""
 

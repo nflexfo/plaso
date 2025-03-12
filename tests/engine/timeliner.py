@@ -245,12 +245,16 @@ class EventDataTimelinerTest(test_lib.EngineTestCase):
     event_data.value = 'MyValue'
 
     self.assertEqual(event_data_timeliner.number_of_produced_events, 0)
+    self.assertEqual(event_data_timeliner.data_types_counter.total(), 0)
 
     storage_writer = self._CreateStorageWriter(event_data)
 
     event_data_timeliner.ProcessEventData(storage_writer, event_data, None)
 
     self.assertEqual(event_data_timeliner.number_of_produced_events, 1)
+    self.assertEqual(event_data_timeliner.data_types_counter[event_data.DATA_TYPE], 1)
+    self.assertEqual(event_data_timeliner.data_types_counter['total'], 1)
+    self.assertEqual(event_data_timeliner.data_types_counter.total(), 2)
 
     # Test creating no placeholder event.
     event_data_timeliner = timeliner.EventDataTimeliner(
@@ -260,12 +264,14 @@ class EventDataTimelinerTest(test_lib.EngineTestCase):
     event_data.value = 'MyValue'
 
     self.assertEqual(event_data_timeliner.number_of_produced_events, 0)
+    self.assertEqual(event_data_timeliner.data_types_counter.total(), 0)
 
     storage_writer = self._CreateStorageWriter(event_data)
 
     event_data_timeliner.ProcessEventData(storage_writer, event_data, None)
 
     self.assertEqual(event_data_timeliner.number_of_produced_events, 0)
+    self.assertEqual(event_data_timeliner.data_types_counter.total(), 0)
 
   def testSetPreferredTimeZone(self):
     """Tests the SetPreferredTimeZone function."""

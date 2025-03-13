@@ -21,7 +21,7 @@ class SQLiteStorageFile(sqlite_store.SQLiteAttributeContainerStore):
     compression_format (str): compression format.
   """
 
-  _FORMAT_VERSION = 20230327
+  _FORMAT_VERSION = 20250313
 
   _APPEND_COMPATIBLE_FORMAT_VERSION = 20230327
 

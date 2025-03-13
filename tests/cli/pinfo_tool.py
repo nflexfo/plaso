@@ -18,7 +18,17 @@ class PinfoToolTest(test_lib.CLIToolTestCase):
 
   # pylint: disable=protected-access
 
+  # TODO: change compared data type value when `psort_test.plaso` is updated to
+  # 20250313 format.
   _EXPECTED_OUTPUT_COMPARE_STORES = """\
+
+************************ Events generated per data type ************************
+Data type name : Number of events
+--------------------------------------------------------------------------------
+       fs:stat : 3 (0)
+         total : 3 (0)
+--------------------------------------------------------------------------------
+
 
 ************************* Events generated per parser **************************
 Parser (plugin) name : Number of events
@@ -552,8 +562,8 @@ Storage files are different.
   def testPrintStorageInformationAsJSON(self):
     """Tests the PrintStorageInformation function with JSON output format."""
     test_filename = 'pinfo_test.plaso'
-    session_identifier = '0db86b5f-9176-4863-bf1e-9ac7ca632377'
-    session_start_time = '2023-03-27 03:47:24.091665'
+    session_identifier = '1ae93a12-200e-42dd-a28f-3ba0f3631bc7'
+    session_start_time = '2025-03-13 08:23:19.376058'
 
     test_file_path = self._GetTestFilePath([test_filename])
     self._SkipIfPathNotExists(test_file_path)
@@ -600,15 +610,15 @@ Storage files are different.
   def testPrintStorageInformationAsText(self):
     """Tests the PrintStorageInformation function with text output format."""
     test_filename = 'pinfo_test.plaso'
-    format_version = '20230327'
-    plaso_version = '20230311'
-    session_identifier = '0db86b5f-9176-4863-bf1e-9ac7ca632377'
-    session_start_time = '2023-03-27T03:47:24.091665+00:00'
-    session_completion_time = '2023-03-27T03:47:32.596408+00:00'
+    format_version = '20250313'
+    plaso_version = '20241006'
+    session_identifier = '1ae93a12-200e-42dd-a28f-3ba0f3631bc7'
+    session_start_time = '2025-03-13T08:23:19.376058+00:00'
+    session_completion_time = '2025-03-13T08:23:27.590599+00:00'
 
     command_line_arguments = (
-        './tools/log2timeline.py --partition=all --quiet '
-        '--storage-file pinfo_test.plaso test_data/tsk_volume_system.raw')
+        './plaso/scripts/log2timeline.py --partition=all --quiet '
+        '--storage-file pinfo_test.plaso ./test_data/tsk_volume_system.raw')
 
     enabled_parser_names = ', '.join([
         'android_app_usage',
@@ -658,6 +668,7 @@ Storage files are different.
         'olecf/olecf_default',
         'olecf/olecf_document_summary',
         'olecf/olecf_summary',
+        'onedrive_log',
         'opera_global',
         'opera_typed_history',
         'pe',
@@ -665,11 +676,16 @@ Storage files are different.
         'plist/airport',
         'plist/apple_id',
         'plist/ios_carplay',
+        'plist/ios_identityservices',
         'plist/ipod_device',
         'plist/launchd_plist',
+        'plist/macos_background_items_plist',
         'plist/macos_bluetooth',
+        'plist/macos_install_history',
+        'plist/macos_login_items_plist',
+        'plist/macos_login_window_plist',
         'plist/macos_software_update',
-        'plist/macosx_install_history',
+        'plist/macos_startup_item_plist',
         'plist/macuser',
         'plist/plist_default',
         'plist/safari_downloads',
@@ -682,10 +698,13 @@ Storage files are different.
         'recycle_bin',
         'recycle_bin_info2',
         'rplog',
+        'simatic_s7',
         'spotlight_storedb',
         'sqlite',
+        'sqlite/android_app_usage',
         'sqlite/android_calls',
         'sqlite/android_sms',
+        'sqlite/android_turbo',
         'sqlite/android_webview',
         'sqlite/android_webviewcache',
         'sqlite/appusage',
@@ -696,12 +715,16 @@ Storage files are different.
         'sqlite/chrome_autofill',
         'sqlite/chrome_extension_activity',
         'sqlite/dropbox',
-        'sqlite/firefox_cookies',
+        'sqlite/edge_load_statistics',
+        'sqlite/firefox_10_cookies',
+        'sqlite/firefox_118_downloads',
+        'sqlite/firefox_2_cookies',
         'sqlite/firefox_downloads',
         'sqlite/firefox_history',
         'sqlite/google_drive',
         'sqlite/hangouts_messages',
         'sqlite/imessage',
+        'sqlite/ios_datausage',
         'sqlite/ios_netusage',
         'sqlite/ios_powerlog',
         'sqlite/ios_screentime',
@@ -721,6 +744,7 @@ Storage files are different.
         'sqlite/twitter_android',
         'sqlite/twitter_ios',
         'sqlite/windows_eventtranscript',
+        'sqlite/windows_push_notification',
         'sqlite/windows_timeline',
         'sqlite/zeitgeist',
         'symantec_scanlog',
@@ -732,6 +756,7 @@ Storage files are different.
         'text/aws_elb_access',
         'text/bash_history',
         'text/confluence_access',
+        'text/cri_log',
         'text/dpkg',
         'text/gdrive_synclog',
         'text/googlelog',
@@ -741,8 +766,10 @@ Storage files are different.
         'text/mac_appfirewall_log',
         'text/mac_securityd',
         'text/mac_wifi',
+        'text/macos_launchd_log',
         'text/popularity_contest',
         'text/postgresql',
+        'text/powershell_transcript',
         'text/santa',
         'text/sccm',
         'text/selinux',
@@ -753,6 +780,9 @@ Storage files are different.
         'text/sophos_av',
         'text/syslog',
         'text/syslog_traditional',
+        'text/teamviewer_application_log',
+        'text/teamviewer_connections_incoming',
+        'text/teamviewer_connections_outgoing',
         'text/viminfo',
         'text/vsftpd',
         'text/winfirewall',
@@ -762,9 +792,11 @@ Storage files are different.
         'text/zsh_extended_history',
         'trendmicro_url',
         'trendmicro_vd',
+        'unified_logging',
         'usnjrnl',
         'utmp',
         'utmpx',
+        'wincc_sys',
         'windefender_history',
         'winevt',
         'winevtx',
@@ -781,6 +813,7 @@ Storage files are different.
         'winreg/explorer_programscache',
         'winreg/microsoft_office_mru',
         'winreg/microsoft_outlook_mru',
+        'winreg/motherboard_info',
         'winreg/mrulist_shell_item_list',
         'winreg/mrulist_string',
         'winreg/mrulistex_shell_item_list',

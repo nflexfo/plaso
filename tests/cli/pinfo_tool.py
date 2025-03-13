@@ -587,6 +587,11 @@ Storage files are different.
     storage_counters = json_output.get('storage_counters')
     self.assertIsNotNone(storage_counters)
 
+    data_types_counter = storage_counters['data_types']
+    self.assertIsNotNone(data_types_counter)
+    self.assertEqual(data_types_counter['total'], 3)
+    self.assertEqual(data_types_counter['fs:stat'], 3)
+
     parsers_counter = storage_counters['parsers']
     self.assertIsNotNone(parsers_counter)
     self.assertEqual(parsers_counter['total'], 3)
@@ -834,6 +839,14 @@ Storage files are different.
     table_view.AddRow(['Debug mode', 'False'])
     table_view.AddRow(['Artifact filters', 'N/A'])
     table_view.AddRow(['Filter file', 'N/A'])
+    table_view.Write(output_writer)
+
+    table_view = cli_views.ViewsFactory.GetTableView(
+        cli_views.ViewsFactory.FORMAT_TYPE_CLI,
+        column_names=['Data type name', 'Number of events'],
+        title='Events generated per data type')
+    table_view.AddRow(['fs:stat', '3'])
+    table_view.AddRow(['Total', '3'])
     table_view.Write(output_writer)
 
     table_view = cli_views.ViewsFactory.GetTableView(

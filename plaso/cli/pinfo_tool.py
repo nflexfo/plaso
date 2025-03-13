@@ -1222,11 +1222,12 @@ class PinfoTool(tools.CLITool, tool_options.StorageFileOptions):
     section_written = False
 
     if self._sections == 'all' or 'events' in self._sections:
-      data_types = storage_counters.get('data_types', collections.Counter())
-      self._PrintDataTypesCounter(data_types)
+      if storage_reader.GetFormatVersion() >= 20250313:
+        data_types = storage_counters.get('data_types', collections.Counter())
+        self._PrintDataTypesCounter(data_types)
 
-      if self._output_format == 'json':
-        self._output_writer.Write(', ')
+        if self._output_format == 'json':
+          self._output_writer.Write(', ')
 
       parsers = storage_counters.get('parsers', collections.Counter())
       self._PrintParsersCounter(parsers)
